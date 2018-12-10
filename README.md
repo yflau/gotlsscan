@@ -4,10 +4,12 @@
 
 ```
 Usage of gotlsscan:
+  -ca string
+        specify ca file path in pem foramt(default to system cert pool)
   -host string
-    	host
+        host
   -insecure
-    	skip certificate verification
+        skip certificate verification
   -port string
-    	port (default "443")
+        port (default "443")
 ```
