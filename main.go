@@ -2,8 +2,10 @@ package main
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
 	"os"
@@ -23,6 +25,7 @@ var (
 	host     string
 	port     string
 	insecure bool
+	caPath   string
 )
 
 var versions = []tlsKV{
@@ -61,6 +64,7 @@ func main() {
 	flag.StringVar(&host, "host", "", "host")
 	flag.StringVar(&port, "port", "443", "port")
 	flag.BoolVar(&insecure, "insecure", false, "skip certificate verification")
+	flag.StringVar(&caPath, "ca", "", "specify ca file path in pem foramt(default to system cert pool)")
 	flag.Parse()
 
 	if host == "" {
@@ -71,6 +75,20 @@ func main() {
 	cfg := &tls.Config{
 		ServerName:         host,
 		InsecureSkipVerify: insecure,
+	}
+
+	if caPath != "" {
+		if cfg.RootCAs == nil {
+			cfg.RootCAs = x509.NewCertPool()
+		}
+		content, err := ioutil.ReadFile(caPath)
+		if err != nil {
+			log.Printf("read file error: %s\n", caPath)
+		}
+		ok := cfg.RootCAs.AppendCertsFromPEM(content)
+		if !ok {
+			log.Println("can not parse volvo CA")
+		}
 	}
 
 	for _, v := range versions {
