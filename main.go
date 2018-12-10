@@ -83,11 +83,11 @@ func main() {
 		}
 		content, err := ioutil.ReadFile(caPath)
 		if err != nil {
-			log.Printf("read file error: %s\n", caPath)
+			log.Printf("read CA file error: %s\n", caPath)
 		}
 		ok := cfg.RootCAs.AppendCertsFromPEM(content)
 		if !ok {
-			log.Println("can not parse volvo CA")
+			log.Println("can not parse CA file")
 		}
 	}
 
